@@ -1,8 +1,8 @@
 {
   "format": 1,
   "game": "jumsoi",
-  "seq": 1,
-  "issued_at": "2026-10-19T12:12:34Z",
+  "seq": 2,
+  "issued_at": "2026-10-19T12:38:46Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -20,6 +20,44 @@
       "en": ""
     }
   },
-  "notices": [],
-  "mails": []
+  "notices": [
+    {
+      "id": "n20261019test",
+      "repeat": "daily",
+      "start": "",
+      "end": "2026-10-22T12:38:46Z",
+      "title": {
+        "ko": "운영 시험 공지",
+        "en": "Ops test notice"
+      },
+      "body": {
+        "ko": "공통 운영 콘솔에서 보낸 시험 공지예요.\n이 판이 보이면 공지 통로가 열린 거예요.",
+        "en": "A test notice from the shared ops console."
+      }
+    }
+  ],
+  "mails": [
+    {
+      "id": "m20261019test",
+      "start": "2026-10-19T11:38:46Z",
+      "end": "2026-10-22T12:38:46Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "운영 시험 우편",
+        "en": "Ops test mail"
+      },
+      "body": {
+        "ko": "우편 통로 시험이에요. 받아 보세요.",
+        "en": "Testing the mail channel."
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 100
+        }
+      ]
+    }
+  ]
 }
