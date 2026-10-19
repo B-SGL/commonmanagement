@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공통 운영 콘솔</title>
+<style>
+  :root { --bg:#f6f5f2; --panel:#fff; --ink:#1d1b19; --sub:#6b655f; --line:#dedad3; --accent:#a8322a; --ok:#2f7d4f; --warn:#b26a00; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Pretendard","Malgun Gothic",system-ui,sans-serif; background:var(--bg); color:var(--ink); font-size:14px; }
+  header { display:flex; gap:12px; align-items:center; padding:12px 20px; background:var(--ink); color:#fff; flex-wrap:wrap; }
+  header h1 { font-size:16px; margin:0 12px 0 0; }
+  header .status { font-size:12px; opacity:.85; }
+  main { display:grid; grid-template-columns: minmax(0,1fr) 360px; gap:16px; padding:16px 20px 80px; max-width:1400px; margin:0 auto; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:14px; }
+  section h2 { font-size:15px; margin:0 0 10px; display:flex; justify-content:space-between; align-items:center; }
+  label { display:block; font-size:12px; color:var(--sub); margin:8px 0 3px; }
+  input[type=text], input[type=number], input[type=datetime-local], textarea, select { width:100%; padding:7px 9px; border:1px solid var(--line); border-radius:6px; font:inherit; background:#fff; }
+  textarea { min-height:64px; resize:vertical; }
+  .row { display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:10px; }
+  button { font:inherit; padding:7px 12px; border-radius:6px; border:1px solid var(--line); background:#fff; cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  button.danger { color:var(--accent); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  header button { background:#fff2; color:#fff; border-color:#fff5; }
+  header select { width:auto; }
+  .item { border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin:10px 0; background:#fbfaf8; }
+  .item .head { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+  .item .head b { font-size:13px; }
+  .muted { color:var(--sub); font-size:12px; }
+  .chk { display:flex; gap:6px; align-items:center; font-size:13px; color:var(--ink); margin:8px 0 0; }
+  .issues div { padding:4px 0; font-size:13px; }
+  .issues .err { color:var(--accent); } .issues .warn { color:var(--warn); } .issues .ok { color:var(--ok); }
+  .phone { border:8px solid #222; border-radius:22px; background:#1e1c1a; color:#f4f0e6; padding:14px; min-height:420px; }
+  .phone .card { background:#fdfcf9; color:#15120f; border-radius:8px; padding:10px 12px; margin:8px 0; }
+  .phone .card h4 { margin:0 0 4px; font-size:13px; }
+  .phone .card p { margin:0; font-size:12px; white-space:pre-wrap; }
+  .phone .tag { font-size:11px; color:#a8322a; }
+  pre { background:#f1efea; padding:8px; border-radius:6px; overflow:auto; font-size:11px; max-height:240px; }
+  .sticky { position:sticky; top:12px; }
+  .lang2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  dialog { border:none; border-radius:10px; padding:18px 20px; max-width:560px; }
+  dialog::backdrop { background:#0006; }
+</style>
+</head>
+<body>
+<header>
+  <h1>공통 운영 콘솔</h1>
+  <button id="btnOpen">① 운영 폴더 열기</button>
+  <select id="gameSel"></select>
+  <span class="status" id="status">「common management」 폴더를 열어 주세요 (크롬 · 엣지).</span>
+</header>
+<main>
+  <div>
+    <section id="secKey">
+      <h2>열쇠 <span class="muted" id="keyState"></span></h2>
+      <div class="muted">서명에 쓰는 비밀 열쇠는 <b>keys</b> 폴더 (저장소 밖) 에만 있습니다. 저장소 · 메신저 · 메일로 절대 보내지 마세요. 따로 백업해 두세요.</div>
+      <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap">
+        <button id="btnGenKey">열쇠 새로 만들기 (게임마다 한 번)</button>
+        <button id="btnShowPub">공개 열쇠 보기 (게임 코드에 넣는 값)</button>
+      </div>
+      <pre id="pubOut" hidden></pre>
+    </section>
+
+    <section>
+      <h2>기본 · 업데이트</h2>
+      <div class="row">
+        <div><label>최소 판 (이보다 낮으면 강제 업데이트 · 비우면 없음)</label><input type="text" id="minVersion" placeholder="예: 0.93"></div>
+        <div><label>최신 판 (낮으면 「새 판이 있어요」 안내만)</label><input type="text" id="latestVersion" placeholder="예: 0.96"></div>
+      </div>
+      <label>스토어 주소 (업데이트 단추가 여는 곳)</label><input type="text" id="storeUrl" placeholder="https://play.google.com/store/apps/details?id=…">
+      <div class="muted" id="seqInfo" style="margin-top:8px"></div>
+    </section>
+
+    <section>
+      <h2>점검</h2>
+      <label class="chk"><input type="checkbox" id="mOn"> 점검 안내 켜기</label>
+      <label class="chk"><input type="checkbox" id="mBlock"> 점검 동안 게임 막기 (서버 없는 게임은 보통 끔)</label>
+      <div class="row">
+        <div><label>시작 (비우면 바로)</label><input type="datetime-local" id="mStart"></div>
+        <div><label>끝 (비우면 끌 때까지)</label><input type="datetime-local" id="mEnd"></div>
+      </div>
+      <div class="lang2">
+        <div><label>제목 (한국어)</label><input type="text" id="mTitleKo"><label>내용 (한국어)</label><textarea id="mBodyKo"></textarea></div>
+        <div><label>제목 (English)</label><input type="text" id="mTitleEn"><label>내용 (English)</label><textarea id="mBodyEn"></textarea></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>공지 <button id="btnAddNotice">+ 공지 더하기</button></h2>
+      <div id="notices"></div>
+    </section>
+
+    <section>
+      <h2>우편 <button id="btnAddMail">+ 우편 더하기</button></h2>
+      <div class="muted">받는 사람을 비우면 모두 · 플레이어 번호 (설정 화면의 P…) 를 줄마다 적으면 그 사람만.</div>
+      <div id="mails"></div>
+    </section>
+  </div>
+
+  <div class="sticky">
+    <section>
+      <h2>검사</h2>
+      <div class="issues" id="issues"></div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
+        <button class="primary" id="btnSave">② 서명하고 저장</button>
+        <button id="btnJson">파일 내용 보기</button>
+      </div>
+      <div class="muted" id="saveMsg" style="margin-top:8px"></div>
+    </section>
+    <section>
+      <h2>미리 보기 (앱 안)</h2>
+      <div class="phone" id="preview"></div>
+    </section>
+  </div>
+</main>
+
+<dialog id="dlg"><div id="dlgBody"></div><div style="margin-top:14px; display:flex; gap:8px; justify-content:flex-end"><button id="dlgNo">취소</button><button class="primary" id="dlgYes">확인</button></div></dialog>
+
+<script>
+"use strict";
+// ── 게임 목록 (게임을 더하려면 여기에 한 줄) ──
+const GAMES = {
+  jumsoi: { name: "점소이키우기", rewards: [ { type: "dia", label: "금원보", warnOver: 3000, max: 100000 } ] },
+};
+const ID_RE = /^[A-Za-z0-9_-]{1,32}$/;
+const PID_RE = /^P[2-9A-HJ-KM-NP-Z]{10}$/;
+const VER_RE = /^\d+(\.\d+){0,3}$/;
+
+let root = null, gameId = Object.keys(GAMES)[0], doc = null, prevSeq = 0, privKey = null, privJwk = null;
+const $ = (id) => document.getElementById(id);
+
+function emptyDoc(g) {
+  return { format: 1, game: g, seq: 0, issued_at: "", min_version: "", latest_version: "", store_url: "",
+    maintenance: { on: false, block: false, start: "", end: "", title: { ko: "", en: "" }, body: { ko: "", en: "" } },
+    notices: [], mails: [] };
+}
+function newId(prefix) {
+  const d = new Date(), p = (n) => String(n).padStart(2, "0");
+  const r = Math.random().toString(36).slice(2, 6);
+  return prefix + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + r;
+}
+// datetime-local (이 PC 시각) ↔ UTC ISO
+function toIso(local) { if (!local) return ""; const t = new Date(local); return isNaN(t) ? "" : t.toISOString().replace(/\.\d{3}Z$/, "Z"); }
+function toLocal(iso) { if (!iso) return ""; const t = new Date(iso); if (isNaN(t)) return ""; const o = t.getTimezoneOffset() * 60000; return new Date(t - o).toISOString().slice(0, 16); }
+
+// ── 폴더 · 파일 ──
+async function dirOf(path, create) { let d = root; for (const part of path) d = await d.getDirectoryHandle(part, { create }); return d; }
+async function readText(path, name) { try { const d = await dirOf(path, false); const f = await (await d.getFileHandle(name)).getFile(); return await f.text(); } catch (e) { return null; } }
+async function writeText(path, name, text) { const d = await dirOf(path, true); const h = await d.getFileHandle(name, { create: true }); const w = await h.createWritable(); await w.write(text); await w.close(); }
+
+$("btnOpen").onclick = async () => {
+  if (!window.showDirectoryPicker) { alert("이 브라우저는 폴더 열기를 지원하지 않습니다. 크롬이나 엣지로 열어 주세요."); return; }
+  try { root = await window.showDirectoryPicker({ mode: "readwrite" }); } catch (e) { return; }
+  let hasRepo = true; try { await root.getDirectoryHandle("repo"); } catch (e) { hasRepo = false; }
+  if (!hasRepo) { alert("고른 폴더에 repo 폴더가 없습니다. 「common management」 폴더를 골라 주세요."); root = null; return; }
+  await loadGame();
+};
+
+async function loadGame() {
+  privKey = null; privJwk = null;
+  const txt = root ? await readText(["repo", "games", gameId], "ops.json") : null;
+  if (txt) { try { doc = JSON.parse(txt); } catch (e) { alert("ops.json 을 읽지 못했습니다 — 새로 시작합니다."); doc = emptyDoc(gameId); } }
+  else doc = emptyDoc(gameId);
+  doc.notices = doc.notices || []; doc.mails = doc.mails || [];
+  prevSeq = doc.seq || 0;
+  if (root) {
+    const kt = await readText(["keys"], gameId + ".private.jwk");
+    if (kt) { try { privJwk = JSON.parse(kt); privKey = await crypto.subtle.importKey("jwk", privJwk, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["sign"]); } catch (e) { privKey = null; alert("비밀 열쇠 파일을 읽지 못했습니다: " + e); } }
+  }
+  $("status").textContent = root ? (GAMES[gameId].name + " · " + (txt ? "올린 파일 seq " + prevSeq + " 을 불러왔습니다" : "아직 올린 파일이 없습니다 (새로 시작)")) : "폴더를 열지 않았습니다 (미리 보기만).";
+  $("keyState").textContent = privKey ? "비밀 열쇠 있음" : "비밀 열쇠 없음 — 처음이면 「열쇠 새로 만들기」";
+  $("btnGenKey").disabled = !root || !!privKey;
+  fillForm(); render();
+}
+
+// ── 열쇠 ──
+$("btnGenKey").onclick = async () => {
+  if (!root) return;
+  if (!await ask("<b>" + GAMES[gameId].name + "</b> 의 열쇠를 새로 만듭니다.<br>이미 게임에 넣은 공개 열쇠가 있다면, 새 열쇠로 서명한 파일은 그 게임이 받지 않습니다 (게임 코드의 공개 열쇠도 바꿔야 함).<br>계속할까요?")) return;
+  const kp = await crypto.subtle.generateKey({ name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" }, true, ["sign", "verify"]);
+  const pj = await crypto.subtle.exportKey("jwk", kp.privateKey), uj = await crypto.subtle.exportKey("jwk", kp.publicKey);
+  await writeText(["keys"], gameId + ".private.jwk", JSON.stringify(pj));
+  await writeText(["keys"], gameId + ".public.jwk", JSON.stringify({ kty: uj.kty, n: uj.n, e: uj.e, alg: "RS256" }, null, 2));
+  alert("keys 폴더에 열쇠 두 개를 만들었습니다. 비밀 열쇠 (" + gameId + ".private.jwk) 를 꼭 따로 백업하세요.");
+  await loadGame();
+};
+$("btnShowPub").onclick = async () => {
+  if (!root) return;
+  const t = await readText(["keys"], gameId + ".public.jwk");
+  $("pubOut").hidden = false; $("pubOut").textContent = t || "공개 열쇠가 없습니다 (열쇠를 먼저 만드세요).";
+};
+
+// ── 입력 ↔ 문서 ──
+function fillForm() {
+  $("minVersion").value = doc.min_version || ""; $("latestVersion").value = doc.latest_version || ""; $("storeUrl").value = doc.store_url || "";
+  const m = doc.maintenance || emptyDoc(gameId).maintenance;
+  $("mOn").checked = !!m.on; $("mBlock").checked = !!m.block; $("mStart").value = toLocal(m.start); $("mEnd").value = toLocal(m.end);
+  $("mTitleKo").value = (m.title || {}).ko || ""; $("mTitleEn").value = (m.title || {}).en || ""; $("mBodyKo").value = (m.body || {}).ko || ""; $("mBodyEn").value = (m.body || {}).en || "";
+  $("seqInfo").textContent = "올린 번호 (seq): " + prevSeq + " → 저장하면 " + (prevSeq + 1);
+  drawList("notices"); drawList("mails");
+}
+function readBasics() {
+  doc.min_version = $("minVersion").value.trim(); doc.latest_version = $("latestVersion").value.trim(); doc.store_url = $("storeUrl").value.trim();
+  doc.maintenance = { on: $("mOn").checked, block: $("mBlock").checked, start: toIso($("mStart").value), end: toIso($("mEnd").value),
+    title: { ko: $("mTitleKo").value, en: $("mTitleEn").value }, body: { ko: $("mBodyKo").value, en: $("mBodyEn").value } };
+}
+document.addEventListener("input", (e) => { if (e.target.closest("#notices,#mails")) return; if (doc) { readBasics(); render(); } });
+
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function drawList(kind) {
+  const box = $(kind); box.innerHTML = "";
+  doc[kind].forEach((it, i) => {
+    const el = document.createElement("div"); el.className = "item";
+    const isMail = kind === "mails";
+    el.innerHTML = `
+      <div class="head"><b>${isMail ? "우편" : "공지"} · ${esc(it.id)}</b><span><button data-act="up">▲</button> <button data-act="del" class="danger">지우기</button></span></div>
+      <div class="row">
+        <div><label>시작 (비우면 바로)</label><input type="datetime-local" data-k="start" value="${toLocal(it.start)}"></div>
+        <div><label>끝 (비우면 계속)</label><input type="datetime-local" data-k="end" value="${toLocal(it.end)}"></div>
+        ${isMail ? `<div><label>최소 층 (0 = 모두)</label><input type="number" min="0" data-k="min_stage" value="${it.min_stage || 0}"></div>
+                    <div><label>최소 판 (비우면 모두)</label><input type="text" data-k="min_version" value="${esc(it.min_version || "")}"></div>`
+                 : `<div><label>보이는 횟수</label><select data-k="repeat"><option value="daily"${it.repeat !== "once" ? " selected" : ""}>하루 한 번 (오늘 다시 보지 않기)</option><option value="once"${it.repeat === "once" ? " selected" : ""}>한 번만</option></select></div>`}
+      </div>
+      <div class="lang2">
+        <div><label>제목 (한국어)</label><input type="text" data-k="title.ko" value="${esc(it.title.ko)}"><label>내용 (한국어)</label><textarea data-k="body.ko">${esc(it.body.ko)}</textarea></div>
+        <div><label>제목 (English)</label><input type="text" data-k="title.en" value="${esc(it.title.en)}"><label>내용 (English)</label><textarea data-k="body.en">${esc(it.body.en)}</textarea></div>
+      </div>
+      ${isMail ? `<label>보상</label><div class="row">${GAMES[gameId].rewards.map((r) => `<div><label>${esc(r.label)} (${r.type})</label><input type="number" min="0" data-rw="${r.type}" value="${(it.rewards.find((x) => x.type === r.type) || {}).amount || 0}"></div>`).join("")}</div>
+                  <label>받는 사람 (비우면 모두 · 줄마다 플레이어 번호)</label><textarea data-k="to" placeholder="P2K7M9QX4C">${esc((it.to || []).join("\n"))}</textarea>` : ""}`;
+    el.addEventListener("input", (e) => {
+      const t = e.target, k = t.dataset.k, rw = t.dataset.rw;
+      if (rw) { const v = Math.max(0, Math.floor(Number(t.value) || 0)); it.rewards = it.rewards.filter((x) => x.type !== rw); if (v > 0) it.rewards.push({ type: rw, amount: v }); }
+      else if (k === "start" || k === "end") it[k] = toIso(t.value);
+      else if (k === "min_stage") it.min_stage = Math.max(0, Math.floor(Number(t.value) || 0));
+      else if (k === "to") it.to = t.value.split(/[\s,]+/).map((s) => s.trim().toUpperCase()).filter(Boolean);
+      else if (k && k.includes(".")) { const [a, b] = k.split("."); it[a][b] = t.value; }
+      else if (k) it[k] = t.value.trim();
+      render();
+    });
+    el.addEventListener("click", async (e) => {
+      const act = e.target.dataset.act; if (!act) return;
+      if (act === "del" && await ask("이 " + (isMail ? "우편" : "공지") + " (" + esc(it.id) + ") 을 목록에서 지울까요?<br>이미 받은 사람의 기록은 앱에 남아 있어 같은 번호를 다시 쓰면 안 됩니다.")) doc[kind].splice(i, 1);
+      if (act === "up" && i > 0) { const t = doc[kind][i - 1]; doc[kind][i - 1] = it; doc[kind][i] = t; }
+      drawList(kind); render();
+    });
+    box.appendChild(el);
+  });
+}
+$("btnAddNotice").onclick = () => { doc.notices.push({ id: newId("n"), repeat: "daily", start: "", end: "", title: { ko: "", en: "" }, body: { ko: "", en: "" } }); drawList("notices"); render(); };
+$("btnAddMail").onclick = () => { doc.mails.push({ id: newId("m"), start: toIso(new Date().toISOString()), end: toIso(new Date(Date.now() + 7 * 86400000).toISOString()), to: [], min_stage: 0, min_version: "", title: { ko: "", en: "" }, body: { ko: "", en: "" }, rewards: [] }); drawList("mails"); render(); };
+$("gameSel").onchange = async () => { gameId = $("gameSel").value; await loadGame(); };
+
+// ── 검사 ──
+function check() {
+  const errs = [], warns = [];
+  const vOk = (v) => !v || VER_RE.test(v);
+  if (!vOk(doc.min_version)) errs.push("최소 판 꼴이 이상합니다 (예: 0.93)");
+  if (!vOk(doc.latest_version)) errs.push("최신 판 꼴이 이상합니다");
+  if (doc.min_version && !doc.store_url) warns.push("강제 업데이트를 켰는데 스토어 주소가 비었습니다");
+  if (doc.store_url && !/^https:\/\//.test(doc.store_url)) errs.push("스토어 주소는 https:// 로 시작해야 합니다");
+  const m = doc.maintenance;
+  if (m.on && !m.title.ko) errs.push("점검 제목 (한국어) 이 비었습니다");
+  if (m.start && m.end && m.end <= m.start) errs.push("점검 끝이 시작보다 빠릅니다");
+  if (m.on && m.block) warns.push("점검 동안 게임을 막습니다 — 서버 없는 게임에서 정말 필요한지 확인하세요");
+  const ids = new Set();
+  for (const kind of ["notices", "mails"]) for (const it of doc[kind]) {
+    const nm = (kind === "mails" ? "우편 " : "공지 ") + it.id;
+    if (!ID_RE.test(it.id)) errs.push(nm + ": 번호 꼴이 이상합니다");
+    if (ids.has(it.id)) errs.push(nm + ": 같은 번호가 두 번 있습니다"); ids.add(it.id);
+    if (!it.title.ko) errs.push(nm + ": 제목 (한국어) 이 비었습니다");
+    if (!it.title.en) warns.push(nm + ": 영어 제목이 비었습니다 (영어 사용자에게는 한국어로 보입니다)");
+    if (it.start && it.end && it.end <= it.start) errs.push(nm + ": 끝이 시작보다 빠릅니다");
+    if (it.end && new Date(it.end) < new Date()) warns.push(nm + ": 이미 끝난 기간입니다 (앱에 안 보입니다)");
+    if (kind === "mails") {
+      if (!it.rewards.length) warns.push(nm + ": 보상이 없습니다 (글만 있는 우편)");
+      for (const r of it.rewards) {
+        const def = GAMES[gameId].rewards.find((x) => x.type === r.type);
+        if (!def) errs.push(nm + ": 모르는 보상 " + r.type);
+        else if (r.amount > def.max) errs.push(nm + ": " + def.label + " " + r.amount.toLocaleString() + " — 한도 " + def.max.toLocaleString() + " 를 넘습니다");
+        else if (r.amount > def.warnOver) warns.push(nm + ": " + def.label + " " + r.amount.toLocaleString() + " — 평소보다 큽니다 (0 을 더 붙이지 않았나요?)");
+      }
+      for (const p of it.to || []) if (!PID_RE.test(p)) errs.push(nm + ": 플레이어 번호 꼴이 이상합니다 — " + p);
+      if (!it.end) warns.push(nm + ": 끝이 없습니다 (앱을 다시 깐 사람이 계속 다시 받을 수 있습니다 — 기간을 두세요)");
+      if (!vOk(it.min_version)) errs.push(nm + ": 최소 판 꼴이 이상합니다");
+    }
+  }
+  return { errs, warns };
+}
+
+// ── 미리 보기 ──
+function render() {
+  if (!doc) return;
+  const { errs, warns } = check();
+  $("issues").innerHTML = errs.map((e) => `<div class="err">✖ ${esc(e)}</div>`).join("") + warns.map((w) => `<div class="warn">▲ ${esc(w)}</div>`).join("") + (errs.length + warns.length ? "" : `<div class="ok">✔ 문제 없음</div>`);
+  $("btnSave").disabled = !root || !privKey || errs.length > 0;
+  const now = new Date();
+  const live = (it) => (!it.start || new Date(it.start) <= now) && (!it.end || new Date(it.end) > now);
+  let h = "";
+  if (doc.min_version) h += `<div class="card"><span class="tag">강제 업데이트</span><h4>새 판이 필요해요</h4><p>${esc(doc.min_version)} 보다 낮은 판은 업데이트 화면</p></div>`;
+  const m = doc.maintenance;
+  if (m.on && live(m)) h += `<div class="card"><span class="tag">점검${m.block ? " · 게임 막음" : ""}</span><h4>${esc(m.title.ko)}</h4><p>${esc(m.body.ko)}</p></div>`;
+  for (const n of doc.notices) h += `<div class="card"><span class="tag">공지 · ${n.repeat === "once" ? "한 번" : "하루 한 번"}${live(n) ? "" : " · 지금은 안 보임"}</span><h4>${esc(n.title.ko)}</h4><p>${esc(n.body.ko)}</p></div>`;
+  for (const ml of doc.mails) {
+    const rw = ml.rewards.map((r) => ((GAMES[gameId].rewards.find((x) => x.type === r.type) || {}).label || r.type) + " " + r.amount.toLocaleString()).join(" · ");
+    h += `<div class="card"><span class="tag">우편 · ${ml.to && ml.to.length ? ml.to.length + "명에게" : "모두"}${ml.min_stage ? " · " + ml.min_stage + "층 이상" : ""}${live(ml) ? "" : " · 지금은 안 보임"}</span><h4>${esc(ml.title.ko)}</h4><p>${esc(ml.body.ko)}</p><p><b>${esc(rw)}</b></p></div>`;
+  }
+  $("preview").innerHTML = h || `<div class="muted" style="color:#b0a89c">보낼 것이 없습니다</div>`;
+}
+
+// ── 만들기 · 서명 · 저장 ──
+function buildText(seq) {
+  const out = {
+    format: 1, game: gameId, seq, issued_at: new Date().toISOString().replace(/\.\d{3}Z$/, "Z"),
+    min_version: doc.min_version, latest_version: doc.latest_version, store_url: doc.store_url,
+    maintenance: { on: !!doc.maintenance.on, block: !!doc.maintenance.block, start: doc.maintenance.start || "", end: doc.maintenance.end || "",
+      title: { ko: doc.maintenance.title.ko, en: doc.maintenance.title.en }, body: { ko: doc.maintenance.body.ko, en: doc.maintenance.body.en } },
+    notices: doc.notices.map((n) => ({ id: n.id, repeat: n.repeat === "once" ? "once" : "daily", start: n.start || "", end: n.end || "",
+      title: { ko: n.title.ko, en: n.title.en }, body: { ko: n.body.ko, en: n.body.en } })),
+    mails: doc.mails.map((m) => ({ id: m.id, start: m.start || "", end: m.end || "", to: m.to || [], min_stage: m.min_stage || 0, min_version: m.min_version || "",
+      title: { ko: m.title.ko, en: m.title.en }, body: { ko: m.body.ko, en: m.body.en },
+      rewards: m.rewards.map((r) => ({ type: r.type, amount: r.amount })) })),
+  };
+  return JSON.stringify(out, null, 2).replace(/\r\n/g, "\n") + "\n";
+}
+function b64(buf) { let s = ""; const a = new Uint8Array(buf); for (let i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); }
+
+$("btnJson").onclick = () => { if (!doc) return; readBasics(); show("<pre>" + esc(buildText(prevSeq + 1)) + "</pre>"); };
+$("btnSave").onclick = async () => {
+  readBasics();
+  const { errs, warns } = check();
+  if (errs.length) return;
+  const mails = doc.mails.map((m) => "· " + esc(m.title.ko) + " — " + m.rewards.map((r) => r.type + " " + r.amount.toLocaleString()).join(", ") + " · " + (m.to && m.to.length ? m.to.length + "명" : "모두")).join("<br>");
+  if (!await ask(`<b>${esc(GAMES[gameId].name)}</b> 운영 파일을 서명해 저장합니다 (seq ${prevSeq + 1}).<br><br>공지 ${doc.notices.length} · 우편 ${doc.mails.length}${mails ? "<br>" + mails : ""}${warns.length ? "<br><br><span style='color:#b26a00'>주의 " + warns.length + "건이 있습니다.</span>" : ""}<br><br>저장한 뒤 <b>올리기.bat</b> 를 실행해야 게임에 전해집니다.`)) return;
+  const text = buildText(prevSeq + 1);
+  const bytes = new TextEncoder().encode(text);
+  const sig = await crypto.subtle.sign({ name: "RSASSA-PKCS1-v1_5" }, privKey, bytes);
+  const pub = await crypto.subtle.importKey("jwk", { kty: "RSA", n: privJwk.n, e: privJwk.e, alg: "RS256", ext: true }, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
+  if (!await crypto.subtle.verify({ name: "RSASSA-PKCS1-v1_5" }, pub, sig, bytes)) { alert("서명 확인에 실패했습니다 — 저장하지 않았습니다."); return; }
+  await writeText(["repo", "games", gameId], "ops.json", text);
+  await writeText(["repo", "games", gameId], "ops.json.sig", b64(sig) + "\n");
+  prevSeq += 1; doc.seq = prevSeq;
+  $("seqInfo").textContent = "올린 번호 (seq): " + prevSeq + " → 저장하면 " + (prevSeq + 1);
+  $("saveMsg").innerHTML = `<span style="color:#2f7d4f">✔ 저장했습니다 (seq ${prevSeq}). 이제 「common management」 폴더의 <b>올리기.bat</b> 를 두 번 눌러 올리세요. 올린 뒤 몇 분 안에 게임에 보입니다.</span>`;
+};
+
+// ── 작은 창 ──
+function ask(html) { return new Promise((res) => { $("dlgBody").innerHTML = html; $("dlgNo").hidden = false; $("dlg").showModal(); $("dlgYes").onclick = () => { $("dlg").close(); res(true); }; $("dlgNo").onclick = () => { $("dlg").close(); res(false); }; }); }
+function show(html) { $("dlgBody").innerHTML = html; $("dlgNo").hidden = true; $("dlg").showModal(); $("dlgYes").onclick = () => $("dlg").close(); }
+
+for (const [k, g] of Object.entries(GAMES)) { const o = document.createElement("option"); o.value = k; o.textContent = g.name; $("gameSel").appendChild(o); }
+doc = emptyDoc(gameId); fillForm(); render();
+</script>
+</body>
+</html>

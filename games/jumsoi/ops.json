@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "game": "jumsoi",
+  "seq": 1,
+  "issued_at": "2026-10-19T12:12:34Z",
+  "min_version": "",
+  "latest_version": "",
+  "store_url": "",
+  "maintenance": {
+    "on": false,
+    "block": false,
+    "start": "",
+    "end": "",
+    "title": {
+      "ko": "",
+      "en": ""
+    },
+    "body": {
+      "ko": "",
+      "en": ""
+    }
+  },
+  "notices": [],
+  "mails": []
+}
