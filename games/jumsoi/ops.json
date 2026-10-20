@@ -1,8 +1,8 @@
 {
   "format": 1,
   "game": "jumsoi",
-  "seq": 2,
-  "issued_at": "2026-10-19T12:38:46Z",
+  "seq": 3,
+  "issued_at": "2026-10-20T08:52:28Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -20,22 +20,7 @@
       "en": ""
     }
   },
-  "notices": [
-    {
-      "id": "n20261019test",
-      "repeat": "daily",
-      "start": "",
-      "end": "2026-10-22T12:38:46Z",
-      "title": {
-        "ko": "운영 시험 공지",
-        "en": "Ops test notice"
-      },
-      "body": {
-        "ko": "공통 운영 콘솔에서 보낸 시험 공지예요.\n이 판이 보이면 공지 통로가 열린 거예요.",
-        "en": "A test notice from the shared ops console."
-      }
-    }
-  ],
+  "notices": [],
   "mails": [
     {
       "id": "m20261019test",
