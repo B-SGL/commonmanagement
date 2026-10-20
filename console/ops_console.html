@@ -80,6 +80,7 @@
         <button data-f="active" class="on">보내는 중 · 예약</button><button data-f="ended">끝남</button><button data-f="all">전체</button>
       </div>
       <div class="list" id="list"></div>
+      <div class="hint" style="margin-bottom:6px">게임이 스스로 보내는 우편 (여기서 안 씀): <b>환영 우편 다섯</b> (처음 설치 · 약 ₩3,000 어치) · <b>매주 금요일 저녁 6시</b> 금원보 340 · <b>첫 결제 깜짝 선물</b> 금원보 1,000.</div>
       <div class="hint">우편은 모두 운영 폴더의 파일 한 장 (<b>repo\games\<span class="gid"></span>\ops.json</b>) 에 들어 있어요. 콘솔을 다시 열면 그 파일을 그대로 불러와요.<br>저장하지 않고 고친 내용은 이 브라우저에 임시로 남아, 다음에 열 때 이어서 할지 물어요.</div>
     </section>
   </div>
@@ -190,7 +191,8 @@
 const GAMES = {
   jumsoi: { name: "점소이키우기", rewards: [
     { type: "dia", label: "금원보", unit: "개", warnOver: 3000, max: 100000, hint: "" },
-    { type: "gold_h", label: "엽전 (시간치)", unit: "시간치", warnOver: 48, max: 240, hint: "받는 사람의 지금 층 · 힘 기준 N시간 동안 버는 엽전 (상점 엽전 묶음과 같은 잣대 · 최대 240)" },
+    { type: "gold_h", label: "엽전 (시간치)", unit: "시간치", warnOver: 500, max: 3000, hint: "받는 사람의 지금 층 · 힘 기준 N시간 동안 버는 엽전 (상점 엽전 묶음과 같은 잣대 · ₩1,000 ≈ 455시간치 · 최대 3,000)" },
+    { type: "exp_h", label: "경험치 (시간치)", unit: "시간치", warnOver: 10, max: 100, hint: "받는 사람의 지금 층 기준 N시간 동안 버는 경험치 (금원보 묶음 경험치와 같은 잣대 · ₩1,000 ≈ 2.8시간치 · 최대 100 · 0.97 이상)" },
   ] },
 };
 const REPO_RAW = "https://raw.githubusercontent.com/B-SGL/commonmanagement/main/games/";
