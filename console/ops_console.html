@@ -200,6 +200,7 @@ const ID_RE = /^[A-Za-z0-9_-]{1,32}$/, PID_RE = /^P[2-9A-HJ-KM-NP-Z]{10}$/, VER_
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+let serverMode = false;   // 「운영콘솔 열기.bat」 로 열면 이 PC 의 작은 서버가 파일을 읽고 쓰고 GitHub 로 보낸다 (폴더 고르기 · 올리기.bat 없음)
 let root = null, gameId = Object.keys(GAMES)[0], privKey = null, privJwk = null;
 let doc = null, savedText = "", fileSeq = 0, fileIssued = "", oldNotices = 0, sel = null, filter = "active", remoteSeq = null;
 
@@ -218,8 +219,12 @@ const rwText = (m) => (m.rewards || []).filter((r) => r.amount > 0).map((r) => {
 // ── 폴더 · 파일 (폴더 손잡이는 이 브라우저 IndexedDB 에 기억 — 다음엔 한 번 누르면 된다) ──
 function idb(mode, fn) { return new Promise((res, rej) => { const r = indexedDB.open("opsConsole", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => { const tx = r.result.transaction("kv", mode); const q = fn(tx.objectStore("kv")); tx.oncomplete = () => res(q && q.result); tx.onerror = () => rej(tx.error); }; r.onerror = () => rej(r.error); }); }
 async function dirOf(path, create) { let d = root; for (const part of path) d = await d.getDirectoryHandle(part, { create }); return d; }
-async function readText(path, name) { try { const f = await (await (await dirOf(path, false)).getFileHandle(name)).getFile(); return await f.text(); } catch (e) { return null; } }
-async function writeText(path, name, text) { const h = await (await dirOf(path, true)).getFileHandle(name, { create: true }); const w = await h.createWritable(); await w.write(text); await w.close(); }
+async function readText(path, name) {
+  if (serverMode) { try { const r = await fetch("/api/read?path=" + encodeURIComponent(path.concat([name]).join("/")), { cache: "no-store" }); return r.ok ? await r.text() : null; } catch (e) { return null; } }
+  try { const f = await (await (await dirOf(path, false)).getFileHandle(name)).getFile(); return await f.text(); } catch (e) { return null; } }
+async function writeText(path, name, text) {
+  if (serverMode) { const r = await fetch("/api/write?path=" + encodeURIComponent(path.concat([name]).join("/")), { method: "POST", body: new TextEncoder().encode(text) }); if (!r.ok) throw new Error("쓰기 실패 " + r.status); return; }
+  const h = await (await dirOf(path, true)).getFileHandle(name, { create: true }); const w = await h.createWritable(); await w.write(text); await w.close(); }
 
 async function useRoot(h) {
   let ok = true; try { await h.getDirectoryHandle("repo"); } catch (e) { ok = false; }
@@ -273,14 +278,16 @@ async function loadGame() {
 
 // ── 화면 그리기 ──
 function drawTop() {
-  $("folderText").textContent = root ? "연결됨 · common management" : "연결 안 됨 — 먼저 폴더를 열어 주세요";
+  $("folderText").textContent = serverMode ? "연결됨 · 운영콘솔 (이 PC)" : root ? "연결됨 · common management" : "연결 안 됨 — 먼저 폴더를 열어 주세요 (또는 「운영콘솔 열기.bat」 로 열기)";
+  $("btnOpen").hidden = serverMode; if (serverMode) $("btnReopen").hidden = true;
+  $("btnSave").textContent = serverMode ? "저장하고 보내기" : "저장하기 (서명)";
   $("stFolder").className = "step " + (root ? "good" : "need");
   $("localText").textContent = !root ? "—" : fileSeq ? "번호 " + fileSeq + " · " + nice(fileIssued) + " 저장" : "아직 저장한 적 없음";
   let r = "확인 전", cls = "";
   if (remoteSeq === -1) { r = "확인 못 함 (인터넷?)"; cls = "need"; }
   else if (remoteSeq != null) {
     if (!root || remoteSeq >= fileSeq) { r = "번호 " + remoteSeq + " — 이 PC 와 같아요 (게임이 받아 가요)"; cls = "good"; }
-    else { r = "번호 " + remoteSeq + " — 이 PC 는 " + fileSeq + " · 올리기.bat 를 안 눌렀거나 반영 중 (몇 분)"; cls = "need"; }
+    else { r = "번호 " + remoteSeq + " — 이 PC 는 " + fileSeq + (serverMode ? " · GitHub 반영 중 (몇 분)" : " · 올리기.bat 를 안 눌렀거나 반영 중 (몇 분)"); cls = "need"; }
   }
   $("remoteText").textContent = r; $("stRemote").className = "step " + cls;
   $("keyState").textContent = privKey ? "비밀 열쇠 있음" : "비밀 열쇠 없음";
@@ -449,6 +456,7 @@ function check() {
   if (oldNotices) warns.push("옛 공지 " + oldNotices + "건 — 콘솔에서 공지는 뺐어요 (안내는 우편으로). 저장하면 파일에서 빠져요.");
   return { errs, warns };
 }
+let pushMsg = "";
 function dirty() { return body(doc) !== savedText || oldNotices > 0; }
 function drawIssues() {
   const { errs, warns } = check();
@@ -459,8 +467,9 @@ function drawIssues() {
   if (!root) $("saveMsg").innerHTML = `<span class="dirty">먼저 위의 「폴더 열기」 로 common management 폴더를 열어 주세요.</span>`;
   else if (!privKey) $("saveMsg").innerHTML = `<span class="dirty">비밀 열쇠가 없어 저장할 수 없어요 (keys 폴더).</span>`;
   else if (errs.length) $("saveMsg").innerHTML = `<span class="dirty">빨간 줄 ${errs.length}건을 고쳐야 저장할 수 있어요.</span>`;
-  else if (d) $("saveMsg").innerHTML = `<span class="dirty">● 저장하지 않은 변경이 있어요</span> — 저장한 뒤 올리기.bat 를 눌러야 게임에 나가요.`;
-  else if (remoteSeq != null && remoteSeq >= 0 && remoteSeq < fileSeq) $("saveMsg").innerHTML = `<span class="dirty">저장했어요. 이제 「common management」 폴더의 <b>올리기.bat</b> 를 두 번 누르세요.</span> 누른 뒤 위 3번 「다시 확인」.`;
+  else if (d) $("saveMsg").innerHTML = serverMode ? `<span class="dirty">● 보내지 않은 변경이 있어요</span> — 「저장하고 보내기」 를 누르면 게임에 나가요.` : `<span class="dirty">● 저장하지 않은 변경이 있어요</span> — 저장한 뒤 올리기.bat 를 눌러야 게임에 나가요.`;
+  else if (pushMsg) $("saveMsg").innerHTML = pushMsg;
+  else if (remoteSeq != null && remoteSeq >= 0 && remoteSeq < fileSeq) $("saveMsg").innerHTML = serverMode ? `<span class="dirty">GitHub 에 반영되는 중이에요 (몇 분).</span> 위 3번 「다시 확인」.` : `<span class="dirty">저장했어요. 이제 「common management」 폴더의 <b>올리기.bat</b> 를 두 번 누르세요.</span> 누른 뒤 위 3번 「다시 확인」.`;
   else $("saveMsg").innerHTML = `<span class="clean">✔ 저장된 그대로예요.</span>`;
 }
 
@@ -488,7 +497,7 @@ $("btnSave").onclick = async () => {
   const lines = doc.mails.filter((m) => saved[m.id] !== ckey(m))
     .map((m) => "· " + (saved[m.id] == null ? "새 우편" : "고침") + " 「" + esc(m.title.ko) + "」 — " + esc(rwText(m) || "글만") + " · " + (m.to.length ? m.to.length + "명" : "모두") + " · " + esc(nice(m.start)) + " ~ " + esc(nice(m.end)));
   const gone = Object.keys(saved).filter((id) => !doc.mails.some((m) => m.id === id)).length;
-  if (!await ask(`<b>${esc(GAMES[gameId].name)}</b> 우편 파일을 서명해 저장해요 (번호 ${fileSeq} → ${fileSeq + 1}).<br><br>${lines.join("<br>") || "우편 변경 없음 (게임 설정만)"}${gone ? "<br>· 목록에서 뺀 우편 " + gone + "통" : ""}${warns.length ? "<br><br><span style='color:#a86400'>주의 " + warns.length + "건 (오른쪽 검사)</span>" : ""}<br><br>저장한 뒤 <b>올리기.bat</b> 를 눌러야 게임에 나가요.`)) return;
+  if (!await ask(`<b>${esc(GAMES[gameId].name)}</b> 우편 파일을 서명해 저장해요 (번호 ${fileSeq} → ${fileSeq + 1}).<br><br>${lines.join("<br>") || "우편 변경 없음 (게임 설정만)"}${gone ? "<br>· 목록에서 뺀 우편 " + gone + "통" : ""}${warns.length ? "<br><br><span style='color:#a86400'>주의 " + warns.length + "건 (오른쪽 검사)</span>" : ""}<br><br>${serverMode ? "확인하면 서명해 저장하고 <b>곧바로 GitHub 로 보내요</b> (게임에 닿기까지 몇 분 · 켜 둔 앱은 5분마다 확인)." : "저장한 뒤 <b>올리기.bat</b> 를 눌러야 게임에 나가요."}`)) return;
   const text = buildText(fileSeq + 1), bytes = new TextEncoder().encode(text);
   const sig = await crypto.subtle.sign({ name: "RSASSA-PKCS1-v1_5" }, privKey, bytes);
   const pub = await crypto.subtle.importKey("jwk", { kty: "RSA", n: privJwk.n, e: privJwk.e, alg: "RS256", ext: true }, { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
@@ -497,6 +506,13 @@ $("btnSave").onclick = async () => {
   await writeText(["repo", "games", gameId], "ops.json.sig", b64(sig) + "\n");
   try { localStorage.removeItem("opsDraft_" + gameId); } catch (e) {}
   const keep = sel ? sel.id : null;
+  pushMsg = "";
+  if (serverMode) {
+    $("btnSave").disabled = true; $("saveMsg").innerHTML = "보내는 중…";
+    try { const r = await (await fetch("/api/push", { method: "POST" })).json(); pushMsg = r.ok ? `<span class="clean">✔ ${esc(r.msg)}</span>` : `<span class="dirty">✖ ${esc(r.msg)}</span> — 인터넷 · GitHub 로그인을 확인하고 다시 눌러 주세요.`; }
+    catch (e) { pushMsg = `<span class="dirty">✖ 보내지 못했어요 (${esc(e)})</span>`; }
+    setTimeout(checkRemote, 20000);
+  }
   await loadGame();
   sel = doc.mails.find((m) => m.id === keep) || null; drawAll();
 };
@@ -520,12 +536,18 @@ $("btnJson").onclick = () => show("<pre>" + esc(buildText(fileSeq + 1)) + "</pre
 function ask(html) { return new Promise((res) => { $("dlgBody").innerHTML = html; $("dlgNo").hidden = false; $("dlg").showModal(); $("dlgYes").onclick = () => { $("dlg").close(); res(true); }; $("dlgNo").onclick = () => { $("dlg").close(); res(false); }; }); }
 function show(html) { $("dlgBody").innerHTML = html; $("dlgNo").hidden = true; $("dlg").showModal(); $("dlgYes").onclick = () => $("dlg").close(); }
 window.addEventListener("beforeunload", (e) => { if (doc && root && dirty()) { e.preventDefault(); e.returnValue = ""; } });
+window.addEventListener("pagehide", () => { if (serverMode) navigator.sendBeacon("/api/bye"); });   // 창을 닫으면 작은 서버도 꺼진다
 
 // ── 시작 ──
 for (const [k, g] of Object.entries(GAMES)) { const o = document.createElement("option"); o.value = k; o.textContent = g.name; $("gameSel").appendChild(o); }
 $("gameSel").hidden = Object.keys(GAMES).length < 2;
-doc = emptyDoc(); savedText = body(doc); loadGame();
-idb("readonly", (s) => s.get("root")).then((h) => { if (h && !root) { rememberedRoot = h; $("btnReopen").hidden = false; } }).catch(() => {});
+doc = emptyDoc(); savedText = body(doc);
+(async () => {
+  if (location.protocol.startsWith("http")) { try { serverMode = (await fetch("/api/ping", { cache: "no-store" })).ok; } catch (e) {} }
+  if (serverMode) { root = { server: true }; setInterval(() => fetch("/api/ping").catch(() => {}), 60000); }
+  await loadGame();
+})();
+if (!location.protocol.startsWith("http")) idb("readonly", (s) => s.get("root")).then((h) => { if (h && !root) { rememberedRoot = h; $("btnReopen").hidden = false; } }).catch(() => {});
 setInterval(() => { if (doc) { drawTop(); drawList(); drawIssues(); } }, 60000);   // 남은 시간 · 상태
 </script>
 </body>
