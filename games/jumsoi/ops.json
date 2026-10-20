@@ -1,8 +1,8 @@
 {
   "format": 1,
   "game": "jumsoi",
-  "seq": 4,
-  "issued_at": "2026-10-20T08:53:41Z",
+  "seq": 5,
+  "issued_at": "2026-10-20T14:25:47Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -23,46 +23,24 @@
   "notices": [],
   "mails": [
     {
-      "id": "m202610201752f2p",
-      "start": "2026-10-20T08:52:00Z",
-      "end": "2026-10-27T08:52:00Z",
-      "to": [],
-      "min_stage": 0,
-      "min_version": "",
-      "title": {
-        "ko": "ㅎㅇ",
-        "en": ""
-      },
-      "body": {
-        "ko": "ㅎㅇ",
-        "en": ""
-      },
-      "rewards": [
-        {
-          "type": "dia",
-          "amount": 2000
-        }
-      ]
-    },
-    {
       "id": "m20261019test",
-      "start": "2026-10-19T11:38:46Z",
-      "end": "2026-10-22T12:38:46Z",
+      "start": "2026-10-20T14:25:00Z",
+      "end": "2026-10-20T14:59:00Z",
       "to": [],
       "min_stage": 0,
       "min_version": "",
       "title": {
-        "ko": "운영 시험 우편",
+        "ko": "33333",
         "en": "Ops test mail"
       },
       "body": {
-        "ko": "우편 통로 시험이에요. 받아 보세요.",
+        "ko": "3333",
         "en": "Testing the mail channel."
       },
       "rewards": [
         {
           "type": "dia",
-          "amount": 100
+          "amount": 10000
         }
       ]
     }
