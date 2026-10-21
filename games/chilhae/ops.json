@@ -1,0 +1,48 @@
+{
+  "format": 1,
+  "game": "chilhae",
+  "seq": 1,
+  "issued_at": "2026-10-21T14:44:51Z",
+  "min_version": "",
+  "latest_version": "",
+  "store_url": "",
+  "maintenance": {
+    "on": false,
+    "block": false,
+    "start": "",
+    "end": "",
+    "title": {
+      "ko": "",
+      "en": ""
+    },
+    "body": {
+      "ko": "",
+      "en": ""
+    }
+  },
+  "notices": [],
+  "mails": [
+    {
+      "id": "m202610212344ubb",
+      "start": "2026-10-21T14:44:00Z",
+      "end": "2026-10-28T14:44:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "test20261021 23:43",
+        "en": ""
+      },
+      "body": {
+        "ko": "test20261021 23:43",
+        "en": ""
+      },
+      "rewards": [
+        {
+          "type": "pearl",
+          "amount": 10000
+        }
+      ]
+    }
+  ]
+}
