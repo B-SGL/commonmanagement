@@ -1,8 +1,9 @@
 {
   "format": 1,
   "game": "murimbuild",
-  "seq": 1,
-  "issued_at": "2026-10-21T14:44:20Z",
+  "seq": 2,
+  "send_id": "murimbuild-0002-261022-230934",
+  "issued_at": "2026-10-22T14:09:34Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -23,7 +24,31 @@
   "notices": [],
   "mails": [
     {
+      "id": "m202610222309ydh",
+      "sent_in": "murimbuild-0002-261022-230934",
+      "start": "2026-10-22T14:09:00Z",
+      "end": "2026-10-29T14:09:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "test20261022 - new",
+        "en": ""
+      },
+      "body": {
+        "ko": "test20261022 - new",
+        "en": ""
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 20000
+        }
+      ]
+    },
+    {
       "id": "m202610212344rld",
+      "sent_in": "murimbuild-0002-261022-230934",
       "start": "2026-10-21T14:44:00Z",
       "end": "2026-10-28T14:44:00Z",
       "to": [],
