@@ -1,8 +1,9 @@
 {
   "format": 1,
   "game": "samguklucky",
-  "seq": 2,
-  "issued_at": "2026-10-22T13:16:56Z",
+  "seq": 3,
+  "send_id": "samguklucky-0003-261022-231024",
+  "issued_at": "2026-10-22T14:10:24Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -23,7 +24,31 @@
   "notices": [],
   "mails": [
     {
+      "id": "m202610222310oea",
+      "sent_in": "samguklucky-0003-261022-231024",
+      "start": "2026-10-22T14:10:00Z",
+      "end": "2026-10-29T14:10:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "test20261022 - new",
+        "en": ""
+      },
+      "body": {
+        "ko": "test20261022 - new",
+        "en": ""
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 20000
+        }
+      ]
+    },
+    {
       "id": "m202610212344q2u",
+      "sent_in": "samguklucky-0003-261022-231024",
       "start": "2026-10-22T13:16:00Z",
       "end": "2026-10-29T13:16:00Z",
       "to": [],
