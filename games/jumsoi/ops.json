@@ -1,8 +1,8 @@
 {
   "format": 1,
   "game": "jumsoi",
-  "seq": 7,
-  "issued_at": "2026-10-22T13:16:37Z",
+  "seq": 8,
+  "issued_at": "2026-10-22T13:33:43Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -22,6 +22,28 @@
   },
   "notices": [],
   "mails": [
+    {
+      "id": "m202610222233aex",
+      "start": "2026-10-22T13:33:00Z",
+      "end": "2026-10-29T13:33:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "test20261022",
+        "en": ""
+      },
+      "body": {
+        "ko": "test20261022",
+        "en": ""
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 10000
+        }
+      ]
+    },
     {
       "id": "m202610212343ap4",
       "start": "2026-10-22T13:16:00Z",
