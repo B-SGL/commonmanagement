@@ -1,8 +1,9 @@
 {
   "format": 1,
   "game": "slime",
-  "seq": 1,
-  "issued_at": "2026-10-21T14:44:05Z",
+  "seq": 2,
+  "send_id": "slime-0002-261022-230919",
+  "issued_at": "2026-10-22T14:09:19Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -23,7 +24,31 @@
   "notices": [],
   "mails": [
     {
+      "id": "m202610222309u2v",
+      "sent_in": "slime-0002-261022-230919",
+      "start": "2026-10-22T14:09:00Z",
+      "end": "2026-10-29T14:09:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "test20261022 - new",
+        "en": ""
+      },
+      "body": {
+        "ko": "test20261022 - new",
+        "en": ""
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 20000
+        }
+      ]
+    },
+    {
       "id": "m2026102123434kq",
+      "sent_in": "slime-0002-261022-230919",
       "start": "2026-10-21T14:43:00Z",
       "end": "2026-10-28T14:43:00Z",
       "to": [],
