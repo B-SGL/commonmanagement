@@ -1,9 +1,9 @@
 {
   "format": 1,
   "game": "dragonia",
-  "seq": 1,
-  "send_id": "dragonia-0001-261108-230115",
-  "issued_at": "2026-11-08T14:01:15Z",
+  "seq": 11,
+  "send_id": "dragonia-0011-261108-232857",
+  "issued_at": "2026-11-08T14:28:57Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -22,5 +22,166 @@
     }
   },
   "notices": [],
-  "mails": []
+  "mails": [
+    {
+      "id": "m202611082328ang",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:56Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 A] 모두에게 · 바로",
+        "en": "[Test A]"
+      },
+      "body": {
+        "ko": "모두 받는 시험 우편이에요. 보이면 정상.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328b5i",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:56Z",
+      "to": [
+        "PCTX7B98878"
+      ],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 B] 내 번호에게만",
+        "en": "[Test B]"
+      },
+      "body": {
+        "ko": "이 기기 번호(to)에게만 보낸 시험 우편이에요. 보이면 정상.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "gold_h",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": "m202611082328cwc",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:56Z",
+      "to": [
+        "P2222222222"
+      ],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 C] 다른 번호에게",
+        "en": "[Test C]"
+      },
+      "body": {
+        "ko": "다른 번호에게 보낸 우편. 이 기기에서 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328d2t",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:56Z",
+      "to": [],
+      "min_stage": 9999,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 D] 단계 9999 이상",
+        "en": "[Test D]"
+      },
+      "body": {
+        "ko": "최소 단계 9999. 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328egp",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:56Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "99.0",
+      "title": {
+        "ko": "[시험 E] 앱 99.0 이상",
+        "en": "[Test E]"
+      },
+      "body": {
+        "ko": "최소 앱 판 99.0. 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328f6w",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-11T14:28:00Z",
+      "end": "2026-11-12T14:28:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 F] 3일 뒤 시작",
+        "en": "[Test F]"
+      },
+      "body": {
+        "ko": "예약 우편. 지금 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "dia",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328g0i",
+      "sent_in": "dragonia-0011-261108-232857",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:56Z",
+      "to": [],
+      "min_stage": 1,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 G] 글만 · 단계 1",
+        "en": "[Test G]"
+      },
+      "body": {
+        "ko": "보상 없는 알림 (최소 단계 1). 보이면 정상.",
+        "en": "test"
+      },
+      "rewards": []
+    }
+  ]
 }
