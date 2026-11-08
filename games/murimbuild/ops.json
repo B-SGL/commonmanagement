@@ -1,9 +1,9 @@
 {
   "format": 1,
   "game": "murimbuild",
-  "seq": 2,
-  "send_id": "murimbuild-0002-261022-230934",
-  "issued_at": "2026-10-22T14:09:34Z",
+  "seq": 3,
+  "send_id": "murimbuild-0003-261108-232832",
+  "issued_at": "2026-11-08T14:28:32Z",
   "min_version": "",
   "latest_version": "",
   "store_url": "",
@@ -23,6 +23,166 @@
   },
   "notices": [],
   "mails": [
+    {
+      "id": "m202611082328atg",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:31Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 A] 모두에게 · 바로",
+        "en": "[Test A]"
+      },
+      "body": {
+        "ko": "모두 받는 시험 우편이에요. 보이면 정상.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328bj5",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:31Z",
+      "to": [
+        "PW4KQCZKM2Z"
+      ],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 B] 내 번호에게만",
+        "en": "[Test B]"
+      },
+      "body": {
+        "ko": "이 기기 번호(to)에게만 보낸 시험 우편이에요. 보이면 정상.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "cash_h",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": "m202611082328clv",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:31Z",
+      "to": [
+        "P2222222222"
+      ],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 C] 다른 번호에게",
+        "en": "[Test C]"
+      },
+      "body": {
+        "ko": "다른 번호에게 보낸 우편. 이 기기에서 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328df3",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:31Z",
+      "to": [],
+      "min_stage": 9999,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 D] 단계 9999 이상",
+        "en": "[Test D]"
+      },
+      "body": {
+        "ko": "최소 단계 9999. 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328e0x",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:31Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "99.0",
+      "title": {
+        "ko": "[시험 E] 앱 99.0 이상",
+        "en": "[Test E]"
+      },
+      "body": {
+        "ko": "최소 앱 판 99.0. 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328ftb",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-11T14:28:00Z",
+      "end": "2026-11-12T14:28:00Z",
+      "to": [],
+      "min_stage": 0,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 F] 3일 뒤 시작",
+        "en": "[Test F]"
+      },
+      "body": {
+        "ko": "예약 우편. 지금 보이면 오류.",
+        "en": "test"
+      },
+      "rewards": [
+        {
+          "type": "gem",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": "m202611082328gw0",
+      "sent_in": "murimbuild-0003-261108-232832",
+      "start": "2026-11-08T14:28:00Z",
+      "end": "2026-11-10T14:28:31Z",
+      "to": [],
+      "min_stage": 1,
+      "min_version": "",
+      "title": {
+        "ko": "[시험 G] 글만 · 단계 1",
+        "en": "[Test G]"
+      },
+      "body": {
+        "ko": "보상 없는 알림 (최소 단계 1). 보이면 정상.",
+        "en": "test"
+      },
+      "rewards": []
+    },
     {
       "id": "m202610222309ydh",
       "sent_in": "murimbuild-0002-261022-230934",
