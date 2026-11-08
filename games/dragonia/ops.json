@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "game": "dragonia",
+  "seq": 1,
+  "send_id": "dragonia-0001-261108-230115",
+  "issued_at": "2026-11-08T14:01:15Z",
+  "min_version": "",
+  "latest_version": "",
+  "store_url": "",
+  "maintenance": {
+    "on": false,
+    "block": false,
+    "start": "",
+    "end": "",
+    "title": {
+      "ko": "",
+      "en": ""
+    },
+    "body": {
+      "ko": "",
+      "en": ""
+    }
+  },
+  "notices": [],
+  "mails": []
+}
