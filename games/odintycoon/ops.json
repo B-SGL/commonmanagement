@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "game": "odintycoon",
+  "seq": 1,
+  "send_id": "odintycoon-0001-261108-230052",
+  "issued_at": "2026-11-08T14:00:52Z",
+  "min_version": "",
+  "latest_version": "",
+  "store_url": "",
+  "maintenance": {
+    "on": false,
+    "block": false,
+    "start": "",
+    "end": "",
+    "title": {
+      "ko": "",
+      "en": ""
+    },
+    "body": {
+      "ko": "",
+      "en": ""
+    }
+  },
+  "notices": [],
+  "mails": []
+}
